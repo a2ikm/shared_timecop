@@ -1,11 +1,67 @@
 require "test_helper"
 
 class SharedTimecopTest < Minitest::Test
-  def test_that_it_has_a_version_number
-    refute_nil ::SharedTimecop::VERSION
+  def test_freeze
+    now = Time.now
+    SharedTimecop.freeze(now)
+
+    sleep 1
+
+    refute_equal now, Time.now
+  ensure
+    SharedTimecop::TimecopWrapper.unmock!
   end
 
-  def test_it_does_something_useful
-    assert false
+  def test_freeze_and_go
+    now = Time.now
+    SharedTimecop.freeze(now)
+
+    sleep 1
+
+    SharedTimecop.go
+    assert_equal now, Time.now
+  ensure
+    SharedTimecop::TimecopWrapper.unmock!
+  end
+
+  def test_freeze_and_go_and_return
+    now = Time.now
+    SharedTimecop.freeze(now)
+
+    sleep 1
+
+    SharedTimecop.go
+    SharedTimecop.return
+    refute_equal now, Time.now
+  ensure
+    SharedTimecop::TimecopWrapper.unmock!
+  end
+
+  def test_freeze_and_go_with_block
+    now = Time.now
+    SharedTimecop.freeze(now)
+
+    sleep 1
+
+    SharedTimecop.go do
+      assert_equal now, Time.now
+    end
+
+    refute_equal now, Time.now
+  ensure
+    SharedTimecop::TimecopWrapper.unmock!
+  end
+
+  def test_reset_and_go
+    now = Time.now
+    SharedTimecop.freeze(now)
+    SharedTimecop.reset
+
+    sleep 1
+
+    SharedTimecop.go
+    refute_equal now, Time.now
+  ensure
+    SharedTimecop::TimecopWrapper.unmock!
   end
 end
