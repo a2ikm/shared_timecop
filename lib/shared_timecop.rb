@@ -9,6 +9,10 @@ module SharedTimecop
     require_relative "shared_timecop/rack_middleware"
   end
 
+  if defined?(::Sidekiq)
+    require_relative "shared_timecop/sidekiq_server_middleware"
+  end
+
   class <<self
     def travel(*args)
       stack_item = Timecop::TimeStackItem.new(:travel, *args)

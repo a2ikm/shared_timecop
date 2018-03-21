@@ -53,8 +53,23 @@ Note that this gem is not thread-safe because Timecop is not.
 If you are building an Rails application, write this code in `config/application.rb` or so.
 Then all requests are processed within `SharedTimecop.go {}` block.
 
-```
+```ruby
 config.middleware.unshift SharedTimecop::RackMiddleware
+```
+
+### Sidekiq Server Middleware
+
+`SharedTimecop::SidekiqServerMiddleware` is a Sidekiq server-side middleware to run each job within `SharedTimecop.go` block.
+
+Write this code where the file is loaded before Sidekiq get running.
+Then all jobs are processed within `SharedTimecop.go {}` block.
+
+```ruby
+Sidekiq.configure_server do |config|
+  config.server_middleware do |chain|
+    chain.add SharedTimecop::SidekiqServerMiddleware
+  end
+end
 ```
 
 ## Development
