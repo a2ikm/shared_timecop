@@ -1,6 +1,9 @@
 # SharedTimecop
 
+[![Build Status](https://travis-ci.org/a2ikm/shared_timecop.svg?branch=master)](https://travis-ci.org/a2ikm/shared_timecop)
+
 Timecop wrapper to share timetravel in multi processes.
+
 **NOTE** Currently only `Rails.cache` store is supported.
 
 ## Installation
@@ -35,7 +38,6 @@ SharedTimecop.go
 SharedTimecop.return
 
 SharedTimecop.reset
-
 
 SharedTimecop.go do
   # Here is NOT 1 year ago
