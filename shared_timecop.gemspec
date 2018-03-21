@@ -9,15 +9,13 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Masato Ikeda"]
   spec.email         = ["masato.ikeda@gmail.com"]
 
-  spec.summary       = %q{Shared Timecop in multiple processes.}
-  spec.description   = %q{Shared Timecop in multiple processes.}
+  spec.summary       = %q{Timecop wrapper to share timetravel in multi processes.}
+  spec.description   = %q{Timecop wrapper to share timetravel in multi processes.}
   spec.homepage      = "https://github.com/a2ikm/shared_timecop"
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features)/})
   end
-  spec.bindir        = "exe"
-  spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
   spec.add_dependency "timecop"
