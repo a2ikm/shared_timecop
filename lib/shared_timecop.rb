@@ -5,6 +5,10 @@ module SharedTimecop
   require_relative "shared_timecop/timecop_wrapper"
   require_relative "shared_timecop/version"
 
+  if defined?(::Rack)
+    require_relative "shared_timecop/rack_middleware"
+  end
+
   class <<self
     def travel(*args)
       stack_item = Timecop::TimeStackItem.new(:travel, *args)
