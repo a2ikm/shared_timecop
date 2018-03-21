@@ -16,4 +16,6 @@ module SharedTimecop::Store
       @stack_item = nil
     end
   end
+
+  register :memory, Memory
 end

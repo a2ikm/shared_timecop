@@ -23,4 +23,6 @@ module SharedTimecop::Store
       Rails.cache.delete(name, delete_options)
     end
   end
+
+  register :rails_cache, RailsCache
 end
