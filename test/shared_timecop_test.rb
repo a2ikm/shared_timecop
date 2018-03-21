@@ -1,6 +1,10 @@
 require "test_helper"
 
 class SharedTimecopTest < Minitest::Test
+  def teardown
+    SharedTimecop.store = :memory
+  end
+
   def test_freeze
     now = Time.now
     SharedTimecop.freeze(now)
@@ -63,5 +67,12 @@ class SharedTimecopTest < Minitest::Test
     refute_equal now, Time.now
   ensure
     SharedTimecop::TimecopWrapper.unmock!
+  end
+
+  def test_set_store
+    SharedTimecop.store.is_a?(SharedTimecop::Store::Memory)
+
+    SharedTimecop.store = :rails_cache
+    SharedTimecop.store.is_a?(SharedTimecop::Store::RailsCache)
   end
 end

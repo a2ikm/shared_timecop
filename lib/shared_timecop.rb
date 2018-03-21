@@ -52,11 +52,15 @@ module SharedTimecop
       true
     end
 
-    private
-
     def store
-      @store ||= Store::Memory.new
+      @store ||= Store.lookup!(:memory).new
     end
+
+    def store=(name, *options)
+      @store = Store.lookup!(name).new(*options)
+    end
+
+    private
 
     def save_stack_item(stack_item)
       store.write(stack_item)
