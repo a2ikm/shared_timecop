@@ -1,8 +1,10 @@
 require "timecop"
-require "shared_timecop/timecop_wrapper"
-require "shared_timecop/version"
 
 module SharedTimecop
+  require_relative "shared_timecop/store"
+  require_relative "shared_timecop/timecop_wrapper"
+  require_relative "shared_timecop/version"
+
   class <<self
     def travel(*args)
       stack_item = Timecop::TimeStackItem.new(:travel, *args)
@@ -52,16 +54,20 @@ module SharedTimecop
 
     private
 
+    def store
+      @store ||= Store::Memory.new
+    end
+
     def save_stack_item(stack_item)
-      @stack_item = stack_item
+      store.write(stack_item)
     end
 
     def load_stack_item
-      @stack_item
+      store.read
     end
 
     def clear_stack_item
-      @stack_item = nil
+      store.clear
     end
   end
 end
