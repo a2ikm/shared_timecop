@@ -46,6 +46,17 @@ end
 
 Note that this gem is not thread-safe because Timecop is not.
 
+### Rack Middleware
+
+`SharedTimecop::RackMiddleware` is a Rack middleware to run an application within `SharedTimecop.go` block.
+
+If you are building an Rails application, write this code in `config/application.rb` or so.
+Then all requests are processed within `SharedTimecop.go {}` block.
+
+```
+config.middleware.unshift SharedTimecop::RackMiddleware
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
