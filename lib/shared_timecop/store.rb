@@ -21,6 +21,7 @@ module SharedTimecop
     end
 
     require_relative "store/memory"
+    require_relative "store/server"
 
     if defined?(Rails)
       require_relative "store/rails_cache"

@@ -1,0 +1,73 @@
+#!/usr/bin/env ruby
+
+require "json"
+require "optparse"
+require "webrick"
+
+module WEBrick
+  module HTTPServlet
+    class ProcHandler < AbstractServlet
+      alias do_PUT    do_GET
+      alias do_DELETE do_GET
+    end
+  end
+end
+
+DEFAULT_OPTIONS = {
+  DocumentRoot: Dir.pwd,
+  BindAddress:  "0.0.0.0",
+  Port:         6543,
+}.freeze
+
+options = {}
+OptionParser.new do |op|
+  op.on "-d", "--[no-]daemon" do |v|
+    options[:ServerType] = Daemon if v
+  end
+
+  op.on "-r", "--root PATH" do |v|
+    options[:DocumentRoot] = v
+  end
+
+  op.on "-b", "--bind ADDRESS" do |v|
+    options[:BindAddress] = v
+  end
+
+  op.on "-p", "--port PORT", Integer do |v|
+    options[:Port] = v
+  end
+end.parse!(ARGV)
+
+server = WEBrick::HTTPServer.new(DEFAULT_OPTIONS.merge(options))
+
+%w(INT TERM).each do |sig|
+  trap(sig) { server.shutdown }
+end
+
+DEFAULT_NAME = "__default__"
+dict = {}
+
+server.mount_proc("/") do |req, res|
+  name = req.query["name"] || DEFAULT_NAME
+
+  case req.request_method
+  when "GET"
+    if dict.key?(name)
+      res.status = WEBrick::HTTPStatus::RC_OK
+      res.body = dict[name]
+    else
+      res.status = WEBrick::HTTPStatus::RC_NOT_FOUND
+      res.body = JSON.generate(error: "no entry")
+    end
+  when "POST"
+    dict[name] = req.body
+    res.status = WEBrick::HTTPStatus::RC_CREATED
+  when "DELETE"
+    dict.delete(name)
+    res.status = WEBrick::HTTPStatus::RC_OK
+  else
+    res.status = WEBrick::HTTPStatus::RC_METHOD_NOT_ALLOWED
+  end
+end
+
+server.start
